@@ -2,7 +2,7 @@
 <html>
   <head>
     {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.4.3.1.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.4.3.1.min.css') }}">
     <title>{% block title %}{% endblock %} - CitationNet</title>
     {% endblock %}
   </head>
@@ -10,7 +10,7 @@
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
       {% block footer %}
-      &copy; Copyleft 2022 by <a href="https://modelsen.mpiwg-berlin.mpg.de">you</a>.
+      &copy; Copyleft 2022 by <a href="https://modelsen.mpiwg-berlin.mpg.de">Malte Vogl (ModelSEN)</a>.
       {% endblock %}
     </div>
   </body>

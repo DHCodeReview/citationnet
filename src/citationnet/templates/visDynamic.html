@@ -1,9 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<script src="{% static 'lib/force-citationNet.js' %}"></script>
 
-<script src="{% static 'lib/d3-force.js' %}"></script>
-<script src="{% static 'lib/3d-force-graph.min.js' %}"></script>
+
+<script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+
+<script src="{{ url_for('static', filename='d3-force.js') }}"></script>
+<script src="{{ url_for('static', filename='3d-force-graph.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='vega.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vega-lite.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vega-embed.min.js') }}"></script>
+
+<style>
+  .Absolute-Center {
+    transform: translate(-30%, -100%);
+    position: absolute;
+  }
+
+  .Absolute-Center p {
+    vertical-align: middle;
+    text-align: center;
+  }
+</style>
 
 <div id="3d-graph" style="position: fixed; top: 75px; height:100px; left: 0px;">
 </div>
@@ -20,64 +39,78 @@
       <p>Usage reference</p>
     </div>
     <div id="collapseOne" class="collapse body" aria-labelledby="headingOne" data-parent="#usage">
-        Upon opening the graph is shown from above, the requested publication is shown in red. Nodes farer away from the
-        center, have more citations.<br>
-        When viewed from the side, the requested publication is placed in the center of the screen with younger
-        publications above and older ones below.
-        Hover over a node to show DOI, year of publishing and the number of citations according to CrossRef.<br>
-        Click a node to open the publication using it's DOI. <br>
-        Click and drag inside the window to rotate the graph.<br>
-        Rightclick and drag inside the window to move.<br>
-        Scroll inside the window to zoom in or out.<br>
-        Try playing around with the additional viewing options below. <br>
-        The menu button right next to this sidebar opens and closes the sidebar. <br>
-        Should there be any issues, questions or feature requests, feel free to message <a class="mail"
-          href="mailto:regel@mpiwg-berlin.mpg.de">Robert Egel.</a>
+      Upon opening the graph is shown from above, the requested publication is shown in red. Nodes farer away from the
+      center, have more citations.<br>
+      When viewed from the side, the requested publication is placed in the center of the screen with younger
+      publications above and older ones below.
+      Hover over a node to show DOI, year of publishing and the number of citations according to CrossRef.<br>
+      Click a node to open the publication using it's DOI. <br>
+      Click and drag inside the window to rotate the graph.<br>
+      Rightclick and drag inside the window to move.<br>
+      Scroll inside the window to zoom in or out.<br>
+      Try playing around with the additional viewing options below. <br>
+      The menu button right next to this sidebar opens and closes the sidebar. <br>
+      Should there be any issues, questions or feature requests, feel free to message <a class="mail"
+        href="mailto:regel@mpiwg-berlin.mpg.de">Robert Egel.</a>
     </div>
   </div>
 
   <p></p>
-  <p>Change Viewpoint</p>
-  <a href="javascript:void(0)" id="btnTopView" onclick="net.view('top')">top</a>
-  <a href="javascript:void(0)" id="btnSideView" onclick="net.view('side')">side</a>
+  <p>View options</p>
+  <a href="javascript:void(0)" id="btnTopView" onclick="window.net.view('top')">Top view</a>
+  <a href="javascript:void(0)" id="btnSideView" onclick="window.net.view('side')">Side view</a>
+  <a href="javascript:void(0)" id="btnFORChart" onclick="toggleFORChart()">View Fields of Research Chart</a>
 
   <p>Node options</p>
-  <a href="javascript:void(0)" id="btnNodeSize" onclick="net.toggleNodeSize()">size by number of citations</a>
+  <a href="javascript:void(0)" id="btnNodeSize" onclick="window.net.toggleNodeSize()">size by number of citations</a>
   <a>relative node size: <input type="range" min="0.1" max="2.0" value="0.5" step="0.1" class="slider" id="rngNodeSize">
-    <button onclick="net.readNodeSize()">set</button></a>
+    <button onclick="window.net.readNodeSize()">set</button></a>
 
   <p>Edge options</p>
-  <a href="javascript:void(0)" id="btnEdgesOnlyInput" onclick="net.toggleEdgesOnlyInput()">view edges connected to input
+  <a href="javascript:void(0)" id="btnEdgesOnlyInput" onclick="window.net.toggleEdgesOnlyInput()">view edges connected
+    to input
     node only</a>
 
   <p>Layout options</p>
   <a>cylinder radius: <input type="range" min="0" max="500" value="100" class="slider" id="rngLayoutRadius"> <button
-      onclick="net.readLayout()">set</button></a>
+      onclick="window.net.readLayout()">set</button></a>
   <a>outer value: <input type="range" min="0" max="1000" value="200" class="slider" id="rngLayoutOuterValue"> <button
-      onclick="net.readLayout()">set</button></a>
-  <a href="javascript:void(0)" id="btnDistanceFromInputNode" onclick="net.toggleDistanceFromInputNode()"
+      onclick="window.net.readLayout()">set</button></a>
+  <a href="javascript:void(0)" id="btnDistanceFromInputNode" onclick="window.net.toggleDistanceFromInputNode()"
     style="font-weight: bold;">toggle spacing around input node</a>
 </div>
 
-<script src="{% static 'lib/sidebar.js' %}"></script>
-<link rel="stylesheet" href="{% static 'lib/sidebar.css' %}">
+<script type="module">
+  import { CitationNet } from "{{ url_for('static', filename='force-citationNet.js') }}";
 
-<script>
-  const globJsonPath = "{% get_media_prefix %}{{ staticpath }}";
-  const net = new CitationNet();
-  net.initialize()
+  const globJsonPath = "{{ datafolder + name }}}";
+  window.net = new CitationNet(globJsonPath);
+  window.net.initialize(false);
   document.getElementById("sidebar").style.width = "300px";
 
-  adaptWindowSize = () => {
-    let navHeight = document.getElementsByClassName("navbar")[0].scrollHeight;
+  window.adaptWindowSize = () => {
+    var navHeight = document.getElementsByClassName("navbar")[0].scrollHeight;
 
-    net.adaptWindowSize();
+    window.net.adaptWindowSize();
     document.getElementById("3d-graph").style.top = navHeight;
     document.getElementById("sidebar").style.top = navHeight;
   };
 
-  window.onresize = adaptWindowSize;
+  window.onresize = window.adaptWindowSize;
 
+  await showFOR();
 </script>
+
+<!-- Draggable DIV -->
+<div id="forChartDiv" hidden>
+  <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+  <div id="forChartDivheader">
+    Fields of Research Chart
+  </div>
+  <div id="forChartDivvis" hidden></div>
+  <div id="forChartDivloader" class="loader"></div>
+</div>
+
+<script src="{{ url_for('static', filename='pieChart_vega-lite.js') }}"></script>
 
 {% endblock %}

@@ -3,13 +3,15 @@ import os
 from flask import Flask, render_template
 mainpath = os.path.dirname(os.path.abspath(__file__))
 
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(
-        __name__,
-        instance_relative_config=True,
-        template_folder=f'{mainpath}/templates'
+        "citationnet",
+        # instance_relative_config=True,
+        template_folder=f'{mainpath}/templates',
+        static_url_path="/static",
+        static_folder='static',
+        root_path=mainpath
     )
     # app.config.from_mapping(
     #     SECRET_KEY='dev',
@@ -36,6 +38,6 @@ def create_app(test_config=None):
 
     @app.route('/citationnet/')
     @app.route('/citationnet/<name>')
-    def citnet(name=None):
-        return render_template('visDynamic.html', name=name)
+    def citnet(name=None, jsonDataPath=f'{mainpath}/media/data/'):
+        return render_template('visDynamic.html', name=name, datafolder=jsonDataPath)
     return app
