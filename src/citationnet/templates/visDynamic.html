@@ -83,8 +83,8 @@
 <script type="module">
   import { CitationNet } from "{{ url_for('static', filename='force-citationNet.js') }}";
 
-  const globJsonPath = "{{ datafolder + name }}}";
-  window.net = new CitationNet(globJsonPath);
+  const jsondata = await '{{ jsondata|tojson }}';
+  window.net = new CitationNet(jsondata);
   window.net.initialize(false);
   document.getElementById("sidebar").style.width = "300px";
 
@@ -98,7 +98,7 @@
 
   window.onresize = window.adaptWindowSize;
 
-  await showFOR();
+  // await showFOR();
 </script>
 
 <!-- Draggable DIV -->

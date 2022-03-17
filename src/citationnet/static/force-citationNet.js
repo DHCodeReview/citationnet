@@ -1,46 +1,43 @@
-import * as THREE from './three.module.js';
+// import * as THREE from './three.module.js';
 import * as Lut from './lut.js';
 
-/** 
-* Async function for fetching and parsing JSON files 
+/**
+* Async function for fetching and parsing JSON files
 * @param {String} path - path or url to JSON file
 * @returns {object} parsed JSON object
 */
-async function fetchJSON(path) {
-    console.log(path)
+async function fetchJSON(data) {
+    console.log('parsed', data)
 
     try {
-        var res = await fetch(path);
         // waits until the request completes...
-        var data = await res.json()
+        var data = await JSON.parse(data)
     } catch (error) {
-        console.log(path)
+        console.log(data)
         throw error
     }
-
-
     return data;
 }
 
 class CitationNet {
 
-    /** 
+    /**
     * Constructs a new CitationNet object, but does not initialize it. Call object.initialize() right after this.
-    * @param {String} jsonPath - path or url to citation data as JSON file/stream
+    * @param {String} jsondata - path or url to citation data as JSON file/stream
     */
-    constructor(jsonPath = null) {
+    constructor(jsondata = null) {
         // if jsonPath is not provided try to get globJsonPath, show alert if fails
         try {
-            if (!(jsonPath)) jsonPath = globJsonPath;
+            if (!(jsondata)) jsondata = jsondata;
         } catch (error) {
-            alert("no path or URL to JSON containing citation data specified, graph cannot be displayed")
+            alert("no JSON containing citation data specified, graph cannot be displayed")
         }
 
-        this.jsonPath = jsonPath;
+        this.jsondata = jsondata;
         this.is_initialized = false;
     }
 
-    /** 
+    /**
     * Fetches and processes data, initializes graph and sets view. Constructors cannot be async in JS, which is needed for fetching and saving data.
     */
     async initialize(make_cylinder = false) {
@@ -68,7 +65,7 @@ class CitationNet {
         this.is_initialized = true;
     }
 
-    /** 
+    /**
     * Reads current window size, adapts canvas size and camera projection settings  to it.
     */
     adaptWindowSize() {
@@ -82,7 +79,7 @@ class CitationNet {
         this.graph.camera().updateProjectionMatrix();
     }
 
-    /** 
+    /**
     * Instantiate and configure graph object
     * @returns {function} Brief description of the returning value here.
     */
@@ -112,7 +109,7 @@ class CitationNet {
             .nodeVal(1.0) // uniform size, is changed using this.toggleNodeSize()
             .d3Force('center', null) // disable center force
             .d3Force('charge', null) // disable charge force
-            .d3Force('radialInner', d3.forceRadial(0).strength(0.1)) // weak force pulling the nodes towards the middle axis of the cylinder 
+            .d3Force('radialInner', d3.forceRadial(0).strength(0.1)) // weak force pulling the nodes towards the middle axis of the cylinder
 
             // force pulling the nodes towards the outer radius of the cylinder, strength is dynamic (, look at strengthFuncFactory for details)
             .d3Force('radialOuter', d3.forceRadial(100).strength(CitationNet.strengthFuncFactory(0.0, 1.0, 0, 200)))
@@ -126,7 +123,7 @@ class CitationNet {
 
         // somehow this needs to be done after graph instantiated or else it breaks layouting
         this.graph.d3Force('link', this.graph.d3Force('link').strength(0.0)) // show edges, but set strength to 0.0 -> no charge/spring forces
-        
+
         // vertical positioning according to year of publication
         this.graph.graphData().nodes.forEach((node) => {
             if (node.attributes.nodeyear >= this.inputNode.attributes.nodeyear) {
@@ -142,8 +139,8 @@ class CitationNet {
         return this.graph;
     }
 
-    /** 
-    * Function factory for dynamic strength functions using linear interpolation. If input is outside the interval minStrength or maxStrength is used. 
+    /**
+    * Function factory for dynamic strength functions using linear interpolation. If input is outside the interval minStrength or maxStrength is used.
     * @param {number} minStrength - minimum strength, default = 0.0
     * @param {number} maxStrength - maximum strength, default = 1.0
     * @param {number} min - lower interval boundary, default = 0.0
@@ -160,7 +157,7 @@ class CitationNet {
 
             // return minStrength if out smaller than minStrength
             // return maxStrength if out larger than maxStrength
-            // return out ** 
+            // return out **
             return out <= minStrength ? minStrength
                 : out >= maxStrength ? maxStrength
                     : out ** exp;
@@ -168,7 +165,7 @@ class CitationNet {
         return strengthFunc;
     }
 
-    /** 
+    /**
     * Preprocess this.data
     */
     processData() {
@@ -230,7 +227,7 @@ class CitationNet {
         });
     }
 
-    /** 
+    /**
     * Move camera to default view point. Triggered by UI.
     * @param {String} viewPoint - either "top" or "side"
     * @returns {ReturnValueDataTypeHere} Brief description of the returning value here.
@@ -257,7 +254,7 @@ class CitationNet {
         }
     }
 
-    /** 
+    /**
     * Toggle on/off relative node size by number of citations. Triggered by UI.
     */
     toggleNodeSize() {
@@ -276,7 +273,7 @@ class CitationNet {
         }
     }
 
-    /** 
+    /**
     * Read relative node size from range slider and apply to graph. Triggered by UI.
     */
     readNodeSize() {
@@ -285,7 +282,7 @@ class CitationNet {
     }
 
 
-    /** 
+    /**
     * Read layout options from range sliders and apply to graph. Triggered by UI.
     */
     readLayout() {
@@ -302,7 +299,7 @@ class CitationNet {
         this.graph.d3ReheatSimulation();
     }
 
-    /** 
+    /**
     * Toggle on/off viewing only edges that connect to input node directly. Triggered by UI.
     */
     toggleEdgesOnlyInput() {
@@ -355,7 +352,7 @@ class CitationNet {
      * @returns {Array}
      */
     async getStats() {
-        this.data = await fetchJSON(this.jsonPath);
+        this.data = await fetchJSON(this.jsondata);
         this.processData();
 
         var nodes = this.data.nodes
@@ -431,10 +428,10 @@ class CitationNet {
     }
 }
 
-/** 
+/**
  * Create a custom object for a text label containing a `div` element.
  * Position is calculated using `render2D` method, which is called by a listener for graph controls.
- * @returns {object} custom object containing 
+ * @returns {object} custom object containing
 */
 function _createTextLabel() {
     var div = document.createElement('div');
@@ -478,29 +475,29 @@ function _createTextLabel() {
     }
 }
 var fieldOfResearchDivisions = [
-    "",
-    "01 Mathematical Sciences",
-    "02 Physical Sciences",
-    "03 Chemical Sciences",
-    "04 Earth Sciences",
-    "05 Environmental Sciences",
-    "06 Biological Sciences",
-    "07 Agricultural and Veterinary Sciences",
-    "08 Information and Computing Sciences",
-    "09 Engineering",
-    "10 Technology",
-    "11 Medical and Health Sciences",
-    "12 Built Environment and Design",
-    "13 Education",
-    "14 Economics",
-    "15 Commerce, Management, Tourism and Services",
-    "16 Studies in Human Society",
-    "17 Psychology and Cognitive Sciences",
-    "18 Law and Legal Studies",
-    "19 Studies in Creative Arts and Writing",
-    "20 Language, Communication and Culture",
-    "21 History and Archaeology",
-    "22 Philosophy and Religious Studies",
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
 ]
 
 export { CitationNet };

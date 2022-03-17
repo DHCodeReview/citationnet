@@ -31,7 +31,7 @@ function hideFOR() {
 
 async function loadFOR() {
     const stats = await window.net.getStats();
-    const resp = await fetch("/static/lib/vegaLiteSpec.json");
+    const resp = await fetch("/static/vegaLiteSpec.json");
     const vegaLiteSpec = await resp.json();
 
     vegaLiteSpec.data.values = stats;

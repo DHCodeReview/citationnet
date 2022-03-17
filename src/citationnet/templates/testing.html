@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+    const json = '{{ jsondata|tojson }}';
+    const obj = JSON.parse(json);
+    console.log(JSON.stringify(obj, undefined, 4));
+</script>
+Tested , see console log.
+{% endblock %}
