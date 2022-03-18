@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 mainpath = os.path.dirname(os.path.abspath(__file__))
 
 datapath = os.path.join(mainpath, 'media', 'data')
@@ -35,32 +35,29 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return 'Startpage!'
+    @app.route('/', methods=['POST', 'GET'])
+    def startpage():
+        if request.method == "GET":
+            files = [x for x in os.listdir(datapath) if x.endswith('.json')]
+        return render_template('startpage.html', availablefiles=files)
 
-    @app.route('/citationnet/')
-    @app.route('/citationnet/<name>')
-    def citnet(name=None):
-        if name is None:
+    @app.route('/citationnet/', methods=['POST', 'GET'])
+    def citnet(filename=None):
+        filename = request.args.get('filename')
+        if filename is None:
             return render_template('404.html')
         else:
             try:
-                with open(f'{os.path.join(datapath, name)}', 'r') as jsonfile:
+                with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
                     data = json.load(jsonfile)
                 return render_template('visDynamic.html', jsondata=data)
             except Exception as e:
                 raise e
 
-    @app.route('/simple/')
-    def simple():
-        data = {"name": "Malte", "city": "Berlin"}
-        return render_template('testing.html', jsondata=data)
-
     @app.route('/testjson/')
-    @app.route('/testjson/<name>')
-    def testjson(name=None):
-        with open(f'{os.path.join(datapath, name)}') as jsonfile:
+    @app.route('/testjson/<filename>')
+    def testjson(filename=None):
+        with open(f'{os.path.join(datapath, filename)}') as jsonfile:
             data = json.load(jsonfile)
         return render_template('testing.html', jsondata=data)
 
