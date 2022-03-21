@@ -1,28 +1,24 @@
 import os
 import json
 from flask import Flask, render_template, request
+
+from semanticlayertools.visual.citationnet import GenerateTree
+
 mainpath = os.path.dirname(os.path.abspath(__file__))
 
 datapath = os.path.join(mainpath, 'media', 'data')
 
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(
         "citationnet",
-        # instance_relative_config=True,
         template_folder=f'{mainpath}/templates',
         static_url_path="/static",
         static_folder='static',
         root_path=mainpath
     )
-    # app.config.from_mapping(
-    #     SECRET_KEY='dev',
-    #     DATABASE=os.path.join(app.instance_path, 'citationnet.sqlite'),
-    # )
 
     if test_config is None:
-        # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
@@ -34,12 +30,23 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
     @app.route('/', methods=['POST', 'GET'])
     def startpage():
         if request.method == "GET":
             files = [x for x in os.listdir(datapath) if x.endswith('.json')]
-        return render_template('startpage.html', availablefiles=files)
+            return render_template('startpage.html', availablefiles=files)
+        elif request.method == "POST":
+            apitoken = request.args.get('token')
+            doivalue = request.args.get('doistring')
+            tree = GenerateTree(api_key=apitoken)
+            time, filename = tree.query(doivalue).generateNetworkFiles(datapath)
+            files = [x for x in os.listdir(datapath) if x.endswith('.json')]
+            return render_template(
+                'startpage.html',
+                availablefiles=files,
+                duration=time,
+                filename=filename
+            )
 
     @app.route('/citationnet/', methods=['POST', 'GET'])
     def citnet(filename=None):

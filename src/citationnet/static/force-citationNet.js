@@ -105,7 +105,7 @@ class CitationNet {
             )
             .nodeRelSize(0.5)
             .nodeAutoColorBy(node => node.attributes.category_for)
-            .nodeOpacity(1.0)
+            .nodeOpacity(0.8)
             .nodeVal(node => node.attributes['ref-by-count']) // size based on citation count, changed using this.toggleNodeSize()
             .d3Force('center', null) // disable center force
             .d3Force('charge', null) // disable charge force
@@ -372,7 +372,7 @@ class CitationNet {
             // console.log(divnumVals)
             // const myArray = text.split(";").filter(forcode => forcode.includes('03')).map(forcode => forcode.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0);
             var x = divnodes.map(forcodeval => forcodeval.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0)/nodes.length;
-            console.log(division, x)
+            // console.log(division, x)
             this.stats.push({ 'category': fieldOfResearchDivisions[division], 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': divnodesContain.length });
             cumulative += x
         };
