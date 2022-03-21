@@ -7,7 +7,7 @@ import * as Lut from './lut.js';
 * @returns {object} parsed JSON object
 */
 async function fetchJSON(data) {
-    console.log('parsed', data)
+    // console.log('parsed', data)
 
     try {
         // waits until the request completes...
@@ -50,11 +50,11 @@ class CitationNet {
 
         // variables for control toggle-functions
         this.nodeSize = false;
-        this.edgesOnlyInput = false;
-        this.distanceFromInputNode = true;
+        this.edgesOnlyInput = true;
+        this.distanceFromInputNode = false;
 
         this.adaptWindowSize();
-        this.view('top');
+        this.view('side');
         this.toggleNodeSize();
 
         if (make_cylinder) {
@@ -106,7 +106,7 @@ class CitationNet {
             .nodeRelSize(0.5)
             .nodeAutoColorBy(node => node.attributes.category_for)
             .nodeOpacity(1.0)
-            .nodeVal(1.0) // uniform size, is changed using this.toggleNodeSize()
+            .nodeVal(node => node.attributes['ref-by-count']) // size based on citation count, changed using this.toggleNodeSize()
             .d3Force('center', null) // disable center force
             .d3Force('charge', null) // disable charge force
             .d3Force('radialInner', d3.forceRadial(0).strength(0.1)) // weak force pulling the nodes towards the middle axis of the cylinder
@@ -173,7 +173,7 @@ class CitationNet {
         var id_map = {};
 
         // find input node
-        this.inputNode = data.nodes.filter(o => o.attributes.is_input_DOI == "True")[0];
+        this.inputNode = data.nodes.filter(o => o.attributes.is_input_DOI == true)[0];
         var inputNode = this.inputNode;
 
         for (let i = 0; i < data.nodes.length; i++) {
@@ -360,15 +360,26 @@ class CitationNet {
         this.stats = []
         var cumulative = 0.0;
 
-        fieldOfResearchDivisions.forEach(division => {
-            var x = nodes.filter(node => node.attributes.category_for == division).length / nodes.length;
-            this.stats.push({ 'category': division, 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': nodes.filter(node => node.attributes.category_for == division).length });
+        for (var division in fieldOfResearchDivisions){
+            const reducer = (accumulator, curr) => accumulator + curr;
+            var divnodesContain = nodes.filter(node => node.attributes.category_for.includes(division));
+            // console.log(divnodesContain)
+            var divnodesElements = divnodesContain.map(node => node.attributes.category_for.split(';')).flat(1);
+            // console.log(divnodesElements)
+            var divnodes = divnodesElements.filter(forcode => forcode.includes(division));
+            // console.log(divnodes)
+            var divnumVals = divnodes.map(elem => elem.split(':')[1]);
+            // console.log(divnumVals)
+            // const myArray = text.split(";").filter(forcode => forcode.includes('03')).map(forcode => forcode.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0);
+            var x = divnodes.map(forcodeval => forcodeval.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0)/nodes.length;
+            console.log(division, x)
+            this.stats.push({ 'category': fieldOfResearchDivisions[division], 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': divnodesContain.length });
             cumulative += x
-        });
+        };
 
-        console.log(this.stats.filter(stat => stat.category == ""));
-        console.log(this.stats.filter(stat => stat.category == "")[0]);
-        this.stats.filter(stat => stat.category == "")[0].category = "none";
+        // console.log(this.stats.filter(stat => stat.category == "00"));
+        // console.log(this.stats.filter(stat => stat.category == "00")[0]);
+        // this.stats.filter(stat => stat.category == "00")[0].category = "none";
 
         return this.stats
     }
@@ -388,6 +399,9 @@ class CitationNet {
             var thetastart = category_for.start * 2 * Math.PI;
             var theta = category_for.value * 2 * Math.PI;
             var color = lut.getColor(category_for.start);
+            if (category_for.category == "00 No For code") {
+              var color = new THREE.Color("#808080");
+            }
 
             var geometry = new THREE.CylinderGeometry(radius, radius, 1, 128, 1, false, thetastart, theta);
             var material = new THREE.MeshBasicMaterial({ color: color });
@@ -397,7 +411,7 @@ class CitationNet {
             this.graph.scene().add(cylinder);
             this.pie.slices.push(cylinder);
 
-            category_for.category = (category_for.category == "") ? "no FOR matched" : category_for.category
+            // category_for.category = (category_for.category == "00 No For code") ? "00 No For code" : category_for.category
 
             if (category_for.value >= 0.02) {
                 var text = _createTextLabel();
@@ -474,30 +488,33 @@ function _createTextLabel() {
         }
     }
 }
-var fieldOfResearchDivisions = [
-    "00",
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-]
+var fieldOfResearchDivisions = {
+     '00': '00 No For code',
+     '01': '01 Mathematical Sciences',
+     '02': '02 Physical Sciences',
+     '03': '03 Chemical Sciences',
+     '04': '04 Earth Sciences',
+     '05': '05 Environmental Sciences',
+     '06': '06 Biological Sciences',
+     '07': '07 Agricultural and Veterinary Sciences',
+     '08': '08 Information and Computing Sciences',
+     '09': '09 Engineering',
+     '10': '10 Technology',
+     '11': '11 Medical and Health Sciences',
+     '12': '12 Built Environment and Design',
+     '13': '13 Education',
+     '14': '14 Economics',
+     '15': '15 Commerce, Management, Tourism and Services',
+     '16': '16 Studies in Human Society',
+     '17': '17 Psychology and Cognitive Sciences',
+     '18': '18 Law and Legal Studies',
+     '19': '19 Studies in Creative Arts and Writing',
+     '20': '20 Language, Communication and Culture',
+     '21': '21 History and Archaeology',
+     '22': '22 Philosophy and Religious Studies'
+}
+
+
+
 
 export { CitationNet };

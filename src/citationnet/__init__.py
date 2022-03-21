@@ -44,21 +44,15 @@ def create_app(test_config=None):
     @app.route('/citationnet/', methods=['POST', 'GET'])
     def citnet(filename=None):
         filename = request.args.get('filename')
+        files = [x for x in os.listdir(datapath) if x.endswith('.json')]
         if filename is None:
             return render_template('404.html')
         else:
             try:
                 with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
                     data = json.load(jsonfile)
-                return render_template('visDynamic.html', jsondata=data)
+                return render_template('visDynamic.html', jsondata=data, availablefiles=files)
             except Exception as e:
                 raise e
-
-    @app.route('/testjson/')
-    @app.route('/testjson/<filename>')
-    def testjson(filename=None):
-        with open(f'{os.path.join(datapath, filename)}') as jsonfile:
-            data = json.load(jsonfile)
-        return render_template('testing.html', jsondata=data)
 
     return app
