@@ -1,11 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div class="input-group mb-3">
-  <input type="text" class="form-control" placeholder="Enter DOI" aria-label="Enter DOI" aria-describedby="basic-addon2">
-  <div class="input-group-append">
-    <button class="btn btn-outline-secondary" type="button">Generate dataset for DOI</button>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} mb-2" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<form action="/generatedata/" method='post'>
+  <label for="doiInput" class="form-label">Generate data for DOI:</label>
+  <div class="input-group my-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-doiurl">https:/doi.org/</span>
+    </div>
+    <input type="text" class="form-control" name="doiInput" id="doiInput" aria-describedby="EnterDOI">
   </div>
-</div>
+  <div class="input-group my-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-addon3">cited at most</span>
+    </div>
+    <input type="number" class="form-control" name="citationlimit" min=10 max=500 value=100 aria-describedby="citationlimit">
+    <div class="input-group-append">
+      <span class="input-group-text" id="basic-addon3">times.</span>
+    </div>
+  </div>
+  <div class="my-3">
+    <label for="inputToken" class="form-label">DimensionsAI Token</label>
+    <input type="password" class="form-control" name="inputToken" id="inputToken">
+    <div id="tokenHelp" class="form-text">
+        The routine makes use of DimensionsAI API.
+        Register <a href="https://app.dimensions.ai" target="_blank">here</a> for a token.
+        You can also setup a <a href="https://api-lab.dimensions.ai/cookbooks/1-getting-started/1-Using-the-Dimcli-library-to-query-the-API.html#More-secure-method:-storing-a-private-credentials-file" target="_blank">
+        personal credential file</a>. In this case the token field can remain empty.
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
 {% endblock %}

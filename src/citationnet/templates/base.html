@@ -11,11 +11,11 @@
     <title>CitationNet</title>
   </head>
   <body>
-    {% include 'navigation.html' %}
-    <div id="content" class="container-md x-2">{% block content %}{% endblock %}</div>
-    <div id="footer" class="container-md x-2">
+    <div id="navigation" class="container-md x-2">{% include 'navigation.html' %}</div>
+    <div id="content" class="container-md my-3 x-2">{% block content %}{% endblock %}</div>
+    <div id="footer" class="container-md my-3 x-2">
       {% block footer %}
-      &copy; Copyleft 2022 by <a href="https://modelsen.mpiwg-berlin.mpg.de">Malte Vogl (ModelSEN)</a>.
+      &copy; 2022 by <a href="https://modelsen.mpiwg-berlin.mpg.de">ModelSEN project</a>
       {% endblock %}
     </div>
     <!-- Optional JavaScript; choose one of the two! -->

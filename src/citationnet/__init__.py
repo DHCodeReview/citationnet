@@ -1,13 +1,13 @@
 import os
+from datetime import timedelta
+import secrets
 import json
-from flask import Flask, render_template, request
-
+from flask import Flask, render_template, request, flash, session, url_for, redirect
+import requests
 from semanticlayertools.visual.citationnet import GenerateTree
 
 mainpath = os.path.dirname(os.path.abspath(__file__))
-
 datapath = os.path.join(mainpath, 'media', 'data')
-
 
 def create_app(test_config=None):
     app = Flask(
@@ -17,12 +17,8 @@ def create_app(test_config=None):
         static_folder='static',
         root_path=mainpath
     )
-
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    app.secret_key = secrets.token_bytes(12)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
 
     # ensure the instance folder exists
     try:
@@ -30,36 +26,56 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route('/', methods=['POST', 'GET'])
+    @app.route('/', methods=['GET'])
     def startpage():
-        if request.method == "GET":
-            files = [x for x in os.listdir(datapath) if x.endswith('.json')]
-            return render_template('startpage.html', availablefiles=files)
-        elif request.method == "POST":
-            apitoken = request.args.get('token')
-            doivalue = request.args.get('doistring')
-            tree = GenerateTree(api_key=apitoken)
-            time, filename = tree.query(doivalue).generateNetworkFiles(datapath)
-            files = [x for x in os.listdir(datapath) if x.endswith('.json')]
-            return render_template(
-                'startpage.html',
-                availablefiles=files,
-                duration=time,
-                filename=filename
-            )
-
-    @app.route('/citationnet/', methods=['POST', 'GET'])
-    def citnet(filename=None):
-        filename = request.args.get('filename')
         files = [x for x in os.listdir(datapath) if x.endswith('.json')]
-        if filename is None:
-            return render_template('404.html')
+        return render_template('startpage.html', availablefiles=files)
+
+    @app.route('/generatedata/', methods=['POST'])
+    async def generatedata():
+        session.permanent = True
+        apitoken = request.form.get('inputToken')
+        doivalue = request.form.get('doiInput').strip()
+        citationlimit = int(request.form.get("citationlimit"))
+        if not doivalue:
+            flash("Please enter a DOI.", "warning")
+            return redirect(url_for("startpage"))
+        res = requests.get(f'https://doi.org/{doivalue}')
+        if res.status_code == 404:
+            flash("Please provide a valid DOI.", "danger")
+            return redirect(url_for("startpage"))
+        if apitoken:
+            tree = GenerateTree(api_key=apitoken)
         else:
             try:
-                with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
-                    data = json.load(jsonfile)
-                return render_template('visDynamic.html', jsondata=data, availablefiles=files)
-            except Exception as e:
-                raise e
+                tree = GenerateTree()
+            except Exception:
+                flash("Can not initialize data generation. Did you provide the correct API token?", "danger")
+                return redirect(url_for("startpage"))
+        retvalue = tree.query(doivalue, citationLimit=citationlimit)
+        if isinstance(retvalue, str):
+            flash(retvalue, 'warning')
+            return redirect(url_for("startpage"))
+        time, filename = tree.generateNetworkFiles(datapath)
+        flash(f"Generated new data {filename} in {time} seconds.", "success")
+        return redirect(url_for("citnet", filename=filename))
+
+    @app.route('/citationnet/', methods=['POST', 'GET'])
+    @app.route('/citationnet/<filename>/', methods=['POST', 'GET'])
+    def citnet(filename=None):
+        session.permanent = True
+        files = [x for x in os.listdir(datapath) if x.endswith('.json')]
+        if request.method == 'POST':
+            filename = request.form.get('filename')
+        if filename is None:
+            flash("No filename provided.", "danger")
+            return redirect(url_for('startpage', availablefiles=files))
+        try:
+            with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
+                data = json.load(jsonfile)
+            return render_template('visDynamic.html', jsondata=data, availablefiles=files)
+        except Exception as e:
+            flash(e, 'danger')
+            return redirect(url_for("startpage", availablefiles=files))
 
     return app
