@@ -33,8 +33,14 @@ async function loadFOR() {
     const stats = await window.net.getStats();
     const resp = await fetch("/static/vegaLiteSpec.json");
     const vegaLiteSpec = await resp.json();
+    const domain = stats.map(value => value.category);
+    const range = stats.map(value => "#".concat(value.color));
 
     vegaLiteSpec.data.values = stats;
+    vegaLiteSpec.encoding.color.scale.domain = domain;
+    vegaLiteSpec.encoding.color.scale.range = range;
+
+    console.log(vegaLiteSpec)
 
     vegaEmbed('#forChartDivvis', vegaLiteSpec);
 }

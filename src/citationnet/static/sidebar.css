@@ -15,7 +15,7 @@ body {
     color: #818181;
     /* padding-top: 32px; */
   }
-  
+
   .sidebar a {
     padding: 0px 10px 8px 32px;
     text-decoration: none;
@@ -24,11 +24,11 @@ body {
     display: block;
     transition: 0s;
   }
-  
+
   .sidebar a:hover {
     color: #f1f1f1;
   }
-  
+
   .sidebar p {
     padding: 0px 0px 0px 16px;
     text-decoration: none;
@@ -37,12 +37,12 @@ body {
     display: block;
     transition: 0.0s;
   }
-  
+
   #sidebar p a {
     padding: 0px 0px 0px 0px;
     font-size: 25px;
   }
-  
+
   .sidebar button {
     text-decoration: none;
     font-size: 20px;
@@ -58,9 +58,9 @@ body {
   }
 
   .sidebar .usage .body {
-    padding-left: 32px; 
-    padding-right: 16px; 
-    font-size: 16px; 
+    padding-left: 32px;
+    padding-right: 16px;
+    font-size: 16px;
     color: #818181;
   }
 
@@ -81,7 +81,7 @@ body {
   .sidebar .slider {
     width: 210px;
   }
-  
+
   .sidebar .closebtn {
     position: absolute;
     top: 0;
@@ -89,7 +89,7 @@ body {
     font-size: 36px;
     margin-left: 50px;
   }
-  
+
   .openbtn {
     font-size: 20px;
     cursor: pointer;
@@ -99,21 +99,21 @@ body {
     border: none;
     z-index: 5000;
   }
-  
+
   .openbtn:hover {
     background-color: #444;
   }
-  
+
   #main {
     position: relative;
     top: 0;
-    margin-left: 300px;
+    padding-left: 300px;
     width: fit-content;
     transition: margin-left .5s;
     padding: 16px;
     background-color: transparent;
   }
-  
+
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidebar {padding-top: 15px;}

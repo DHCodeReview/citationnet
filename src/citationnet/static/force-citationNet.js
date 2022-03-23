@@ -1,4 +1,4 @@
-// import * as THREE from './three.module.js';
+import * as THREE from './three.module.js';
 import * as Lut from './lut.js';
 
 /**
@@ -18,6 +18,7 @@ async function fetchJSON(data) {
     }
     return data;
 }
+
 
 class CitationNet {
 
@@ -104,7 +105,7 @@ class CitationNet {
             }
             )
             .nodeRelSize(0.5)
-            .nodeAutoColorBy(node => node.attributes.category_for)
+            .nodeColor(node => fieldOfResearchDivisions[node.attributes.category_for.split(';').map(fors => fors.split(':')).sort((a,b)=>a[1] < b[1])[0][0]][1])
             .nodeOpacity(0.8)
             .nodeVal(node => node.attributes['ref-by-count']) // size based on citation count, changed using this.toggleNodeSize()
             .d3Force('center', null) // disable center force
@@ -373,7 +374,7 @@ class CitationNet {
             // const myArray = text.split(";").filter(forcode => forcode.includes('03')).map(forcode => forcode.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0);
             var x = divnodes.map(forcodeval => forcodeval.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0)/nodes.length;
             // console.log(division, x)
-            this.stats.push({ 'category': fieldOfResearchDivisions[division], 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': divnodesContain.length });
+            this.stats.push({ 'category': fieldOfResearchDivisions[division][0], 'color': fieldOfResearchDivisions[division][1], 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': divnodesContain.length });
             cumulative += x
         };
 
@@ -393,15 +394,11 @@ class CitationNet {
         this.pie = { "slices": [], "labels": [] }
         const radius = document.getElementById("rngLayoutRadius").value;
 
-        const lut = new Lut.Lut('rainbow', 512);
 
         stats.forEach(category_for => {
             var thetastart = category_for.start * 2 * Math.PI;
             var theta = category_for.value * 2 * Math.PI;
-            var color = lut.getColor(category_for.start);
-            if (category_for.category == "00 No For code") {
-              var color = new THREE.Color("#808080");
-            }
+            var color = category_for.color;
 
             var geometry = new THREE.CylinderGeometry(radius, radius, 1, 128, 1, false, thetastart, theta);
             var material = new THREE.MeshBasicMaterial({ color: color });
@@ -488,33 +485,36 @@ function _createTextLabel() {
         }
     }
 }
+
+const lutFOR = new Lut.Lut('rainbow', 22);
+lutFOR.setMax(22);
+const lutGray = new Lut.Lut('grayscale', 1);
+// lutGray.setMin(1);
+
 var fieldOfResearchDivisions = {
-     '00': '00 No For code',
-     '01': '01 Mathematical Sciences',
-     '02': '02 Physical Sciences',
-     '03': '03 Chemical Sciences',
-     '04': '04 Earth Sciences',
-     '05': '05 Environmental Sciences',
-     '06': '06 Biological Sciences',
-     '07': '07 Agricultural and Veterinary Sciences',
-     '08': '08 Information and Computing Sciences',
-     '09': '09 Engineering',
-     '10': '10 Technology',
-     '11': '11 Medical and Health Sciences',
-     '12': '12 Built Environment and Design',
-     '13': '13 Education',
-     '14': '14 Economics',
-     '15': '15 Commerce, Management, Tourism and Services',
-     '16': '16 Studies in Human Society',
-     '17': '17 Psychology and Cognitive Sciences',
-     '18': '18 Law and Legal Studies',
-     '19': '19 Studies in Creative Arts and Writing',
-     '20': '20 Language, Communication and Culture',
-     '21': '21 History and Archaeology',
-     '22': '22 Philosophy and Religious Studies'
-}
-
-
-
+     '00': ['00 No For code', lutGray.getColor(0.5).getHexString()],
+     '01': ['01 Mathematical Sciences', lutFOR.getColor(22).getHexString()],
+     '02': ['02 Physical Sciences', lutFOR.getColor(21).getHexString()],
+     '03': ['03 Chemical Sciences', lutFOR.getColor(3).getHexString()],
+     '04': ['04 Earth Sciences', lutFOR.getColor(4).getHexString()],
+     '05': ['05 Environmental Sciences', lutFOR.getColor(5).getHexString()],
+     '06': ['06 Biological Sciences', lutFOR.getColor(6).getHexString()],
+     '07': ['07 Agricultural and Veterinary Sciences', lutFOR.getColor(7).getHexString()],
+     '08': ['08 Information and Computing Sciences', lutFOR.getColor(8).getHexString()],
+     '09': ['09 Engineering', lutFOR.getColor(9).getHexString()],
+     '10': ['10 Technology', lutFOR.getColor(10).getHexString()],
+     '12': ['12 Built Environment and Design', lutFOR.getColor(11).getHexString()],
+     '11': ['11 Medical and Health Sciences', lutFOR.getColor(12).getHexString()],
+     '13': ['13 Education', lutFOR.getColor(13).getHexString()],
+     '14': ['14 Economics', lutFOR.getColor(14).getHexString()],
+     '15': ['15 Commerce, Management, Tourism and Services', lutFOR.getColor(15).getHexString()],
+     '16': ['16 Studies in Human Society', lutFOR.getColor(16).getHexString()],
+     '17': ['17 Psychology and Cognitive Sciences', lutFOR.getColor(17).getHexString()],
+     '18': ['18 Law and Legal Studies', lutFOR.getColor(18).getHexString()],
+     '19': ['19 Studies in Creative Arts and Writing', lutFOR.getColor(19).getHexString()],
+     '20': ['20 Language, Communication and Culture', lutFOR.getColor(20).getHexString()],
+     '21': ['21 History and Archaeology', lutFOR.getColor(2).getHexString()],
+     '22': ['22 Philosophy and Religious Studies', lutFOR.getColor(1).getHexString()],
+};
 
 export { CitationNet };
