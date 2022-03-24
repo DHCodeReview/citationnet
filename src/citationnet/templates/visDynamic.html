@@ -26,58 +26,59 @@
 
 <div id="3d-graph" style="position: fixed; top: 75px; height:100px; left: 0px;">
 </div>
-
 <div id="main">
-  <button class="openbtn" onclick="toggleNav()">☰</button>
+  <button class="btn btn-outline-success float-left openbtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">☰</button>
 </div>
 
-<div id="sidebar" class="sidebar">
-  <br>
-  <div id="usage" class="usage">
-    <div id="headingOne" data-toggle="collapse" type="button" data-target="#collapseOne" aria-expanded="true"
-      aria-controls="collapseOne">
-      <p>Usage reference</p>
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="sidebarLabel">Options</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+    <h6>Toggle views</h6>
+      <ul class="list-group mb-2">
+        <a class="list-group-item" href="javascript:void(0)" id="btnTopView" onclick="window.net.view('top')">Top view</a>
+        <a class="list-group-item" href="javascript:void(0)" id="btnSideView" onclick="window.net.view('side')">Side view</a>
+        <a class="list-group-item" href="javascript:void(0)" id="btnFORChart" onclick="toggleFORChart()">Fields of Research</a>
+      </ul>
     </div>
-    <div id="collapseOne" class="collapse body" aria-labelledby="headingOne" data-parent="#usage">
-      Upon opening the graph is shown from above, the requested publication is shown in red. Nodes farer away from the
-      center, have more citations.<br>
-      When viewed from the side, the requested publication is placed in the center of the screen with younger
-      publications above and older ones below.
-      Hover over a node to show DOI, year of publishing and the number of citations according to CrossRef.<br>
-      Click a node to open the publication using it's DOI. <br>
-      Click and drag inside the window to rotate the graph.<br>
-      Rightclick and drag inside the window to move.<br>
-      Scroll inside the window to zoom in or out.<br>
-      Try playing around with the additional viewing options below. <br>
-      The menu button right next to this sidebar opens and closes the sidebar. <br>
-      Should there be any issues, questions or feature requests, feel free to message <a class="mail"
-        href="mailto:regel@mpiwg-berlin.mpg.de">Robert Egel.</a>
+    <div class="my-2">
+      <h6>Node options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" href="javascript:void(0)" id="btnNodeSize" onclick="window.net.toggleNodeSize()">Size by number of citations</a>
+        <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#relnodesize" aria-expanded="false" aria-controls="relnodesize">Relative node size</a>
+      </ul>
+      <div class="collapse input-group my-2" id="relnodesize">
+        <input type="range" min="0.1" max="1.0" value="0.5" step="0.1" class="slider" id="rngNodeSize">
+        <button class="btn btn-primary" onclick="window.net.readNodeSize()">set</button>
+      </div>
+    </div>
+    <div class="mb-2">
+      <h6>Edge options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" href="javascript:void(0)" id="btnEdgesOnlyInput" onclick="window.net.toggleEdgesOnlyInput()">Edges of input only</a>
+      </ul>
+    </div>
+    <div>
+      <h6>Layout options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#cylinderradius" aria-expanded="false" aria-controls="cylinderradius">Cylinder radius</a>
+      <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#outerringvalue" aria-expanded="false" aria-controls="outerringvalue">Outer value</a>
+      <a class="list-group-item" href="javascript:void(0)" id="btnDistanceFromInputNode" onclick="window.net.toggleDistanceFromInputNode()"
+        style="font-weight: bold;">Spacing around input</a>
+      </ul>
+      <div class="collapse input-group my-2" id="cylinderradius">
+        <input type="range" min="0" max="500" value="350" class="slider" id="rngLayoutRadius">
+        <button class="btn btn-primary" onclick="window.net.readLayout()">set</button>
+      </div>
+      <div class="collapse input-group my-2" id="outerringvalue">
+        <input type="range" min="0" max="1000" value="800" class="slider" id="rngLayoutOuterValue">
+        <button class="btn btn-primary" onclick="window.net.readLayout()">set</button>
+      </div>
     </div>
   </div>
-
-  <p></p>
-  <p>View options</p>
-  <a href="javascript:void(0)" id="btnTopView" onclick="window.net.view('top')">Top view</a>
-  <a href="javascript:void(0)" id="btnSideView" onclick="window.net.view('side')">Side view</a>
-  <a href="javascript:void(0)" id="btnFORChart" onclick="toggleFORChart()">Fields of Research Chart</a>
-
-  <p>Node options</p>
-  <a href="javascript:void(0)" id="btnNodeSize" onclick="window.net.toggleNodeSize()">size by number of citations</a>
-  <a>relative node size: <input type="range" min="0.1" max="2.0" value="0.5" step="0.1" class="slider" id="rngNodeSize">
-    <button onclick="window.net.readNodeSize()">set</button></a>
-
-  <p>Edge options</p>
-  <a href="javascript:void(0)" id="btnEdgesOnlyInput" onclick="window.net.toggleEdgesOnlyInput()">view edges connected
-    to input
-    node only</a>
-
-  <p>Layout options</p>
-  <a>cylinder radius: <input type="range" min="0" max="500" value="200" class="slider" id="rngLayoutRadius"> <button
-      onclick="window.net.readLayout()">set</button></a>
-  <a>outer value: <input type="range" min="0" max="1000" value="500" class="slider" id="rngLayoutOuterValue"> <button
-      onclick="window.net.readLayout()">set</button></a>
-  <a href="javascript:void(0)" id="btnDistanceFromInputNode" onclick="window.net.toggleDistanceFromInputNode()"
-    style="font-weight: bold;">toggle spacing around input node</a>
 </div>
 
 <script type="module">
@@ -105,7 +106,7 @@
 <div id="forChartDiv" hidden>
   <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
   <div id="forChartDivheader">
-    Fields of Research Chart
+    Fields of Research
   </div>
   <div id="forChartDivvis" hidden></div>
   <div id="forChartDivloader" class="loader"></div>

@@ -12,6 +12,15 @@
   </head>
   <body>
     <div id="navigation" class="container-md x-2">{% include 'navigation.html' %}</div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="container-md x-2 alert alert-{{ category }} mb-2 message" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <div id="content" class="container-md my-3 x-2">{% block content %}{% endblock %}</div>
     <div id="footer" class="container-md my-3 x-2">
       {% block footer %}

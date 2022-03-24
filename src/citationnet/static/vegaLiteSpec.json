@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "A simple pie chart with labels.",
+  "description": "FOR distribution pie chart",
   "data": {
     "values": "empty"
   },
@@ -17,11 +17,11 @@
     {
       "mark": {
         "type": "arc",
-        "outerRadius": 200
+        "outerRadius": 180
       }
     },
     {
-      "mark": { "type": "text", "radius": 215 },
+      "mark": { "type": "text", "radius": 200 },
       "encoding": {
         "text": {
           "field": "value",

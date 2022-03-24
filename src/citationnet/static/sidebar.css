@@ -2,6 +2,10 @@ body {
     font-family: "Lato", sans-serif;
   }
 
+  #sidebar {
+    top: 75px;
+  }
+
   .sidebar {
     height: 100%;
     width: 300px;
@@ -100,6 +104,11 @@ body {
     z-index: 5000;
   }
 
+  .message {
+    position: relative;
+    z-index: 5000;
+  }
+
   .openbtn:hover {
     background-color: #444;
   }
@@ -107,7 +116,6 @@ body {
   #main {
     position: relative;
     top: 0;
-    padding-left: 300px;
     width: fit-content;
     transition: margin-left .5s;
     padding: 16px;

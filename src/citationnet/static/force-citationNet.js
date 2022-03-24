@@ -488,7 +488,7 @@ function _createTextLabel() {
 
 const lutFOR = new Lut.Lut('rainbow', 22);
 lutFOR.setMax(22);
-const lutGray = new Lut.Lut('grayscale', 1);
+const lutGray = new Lut.Lut('grayscale', 10);
 // lutGray.setMin(1);
 
 var fieldOfResearchDivisions = {
