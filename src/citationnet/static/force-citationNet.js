@@ -210,18 +210,19 @@ class CitationNet {
         data.edges.forEach(edge => {
             var a = data.nodes[id_map[edge.source]];
             var b = data.nodes[id_map[edge.target]];
+            if (typeof a != "undefined" && typeof b != "undefined") {
+              !a.outgoingLinks && (a.outgoingLinks = []);
+              a.outgoingLinks.push(edge);
 
-            !a.outgoingLinks && (a.outgoingLinks = []);
-            a.outgoingLinks.push(edge);
+              !a.outgoingLinkTo && (a.outgoingLinkTo = [])
+              a.outgoingLinkTo.push(b);
 
-            !a.outgoingLinkTo && (a.outgoingLinkTo = [])
-            a.outgoingLinkTo.push(b);
+              !b.incomingLinks && (b.incomingLinks = []);
+              b.incomingLinks.push(edge);
 
-            !b.incomingLinks && (b.incomingLinks = []);
-            b.incomingLinks.push(edge);
-
-            !b.incomingLinkFrom && (b.incomingLinkFrom = []);
-            b.incomingLinkFrom.push(a);
+              !b.incomingLinkFrom && (b.incomingLinkFrom = []);
+              b.incomingLinkFrom.push(a);
+            }
 
             delete edge.color;
             delete edge.size;
