@@ -222,11 +222,12 @@ class CitationNet {
 
               !b.incomingLinkFrom && (b.incomingLinkFrom = []);
               b.incomingLinkFrom.push(a);
-            }
 
-            delete edge.color;
-            delete edge.size;
-        });
+              delete edge.color;
+              delete edge.size;
+            } 
+        }
+      );
     }
 
     /**
