@@ -9,6 +9,7 @@ from semanticlayertools.visual.citationnet import GenerateTree
 mainpath = os.path.dirname(os.path.abspath(__file__))
 datapath = os.path.join(mainpath, 'media', 'data')
 
+
 def create_app(test_config=None):
     app = Flask(
         "citationnet",
@@ -44,14 +45,10 @@ def create_app(test_config=None):
         if res.status_code == 404:
             flash("Please provide a valid DOI.", "danger")
             return redirect(url_for("startpage"))
-        if apitoken:
-            tree = GenerateTree(api_key=apitoken)
-        else:
-            try:
-                tree = GenerateTree()
-            except Exception:
-                flash("Can not initialize data generation. Did you provide the correct API token?", "danger")
-                return redirect(url_for("startpage"))
+        tree = GenerateTree(api_key=apitoken)
+        if tree.status == 'Error':
+            flash("Can not initialize data generation. Did you provide the correct API token?", "danger")
+            return redirect(url_for("startpage"))
         retvalue = tree.query(doivalue, citationLimit=citationlimit)
         if isinstance(retvalue, str):
             flash(retvalue, 'warning')
