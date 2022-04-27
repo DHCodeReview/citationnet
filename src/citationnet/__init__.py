@@ -45,10 +45,14 @@ def create_app(test_config=None):
         if res.status_code == 404:
             flash("Please provide a valid DOI.", "danger")
             return redirect(url_for("startpage"))
+        if session.get('TOKEN'):
+            apitoken = session['TOKEN']
         tree = GenerateTree(api_key=apitoken)
         if tree.status == 'Error':
             flash("Can not initialize data generation. Did you provide the correct API token?", "danger")
             return redirect(url_for("startpage"))
+        if not session.get('TOKEN'):
+            session['TOKEN'] = apitoken
         retvalue = tree.query(doivalue, citationLimit=citationlimit)
         if isinstance(retvalue, str):
             flash(retvalue, 'warning')
@@ -67,12 +71,11 @@ def create_app(test_config=None):
         if filename is None:
             flash("No filename provided.", "danger")
             return redirect(url_for('startpage', availablefiles=files))
-        try:
-            with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
-                data = json.load(jsonfile)
-            return render_template('visDynamic.html', jsondata=data, availablefiles=files)
-        except Exception as e:
-            flash(e, 'danger')
+        if not os.path.isfile(f'{os.path.join(datapath, filename)}'):
+            flash(f'No file found at {os.path.join(datapath, filename)}', 'danger')
             return redirect(url_for("startpage", availablefiles=files))
+        with open(f'{os.path.join(datapath, filename)}', 'r') as jsonfile:
+            data = json.load(jsonfile)
+        return render_template('visDynamic.html', jsondata=data, availablefiles=files)
 
     return app

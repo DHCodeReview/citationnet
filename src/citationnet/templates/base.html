@@ -15,13 +15,17 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="container-md x-2 alert alert-{{ category }} mb-2 message" role="alert">
+          <div class="alert alert-{{ category }} alert-dismissible container-md x-2 fade show mb-2" role="alert">
             {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       {% endif %}
     {% endwith %}
-    <div id="content" class="container-md my-3 x-2">{% block content %}{% endblock %}</div>
+    <div id="content" class="container-md my-3 x-2">
+
+      {% block content %}{% endblock %}
+    </div>
     <div id="footer" class="container-md my-3 x-2">
       {% block footer %}
       &copy; 2022 by <a href="https://modelsen.mpiwg-berlin.mpg.de">ModelSEN project</a>

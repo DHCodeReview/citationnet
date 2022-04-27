@@ -225,7 +225,7 @@ class CitationNet {
 
               delete edge.color;
               delete edge.size;
-            } 
+            }
         }
       );
     }
@@ -361,11 +361,11 @@ class CitationNet {
         var nodes = this.data.nodes
         // var nodes = this.graph.graphData().nodes
         this.stats = []
-        var cumulative = 0.0;
+        // var cumulative = 0.0;
 
         for (var division in fieldOfResearchDivisions){
             const reducer = (accumulator, curr) => accumulator + curr;
-            var divnodesContain = nodes.filter(node => node.attributes.category_for.includes(division));
+            var divnodesContain = nodes.filter(node => node.attributes.category_for.includes(division + ':'));
             // console.log(divnodesContain)
             var divnodesElements = divnodesContain.map(node => node.attributes.category_for.split(';')).flat(1);
             // console.log(divnodesElements)
@@ -374,127 +374,23 @@ class CitationNet {
             var divnumVals = divnodes.map(elem => elem.split(':')[1]);
             // console.log(divnumVals)
             // const myArray = text.split(";").filter(forcode => forcode.includes('03')).map(forcode => forcode.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0);
-            var x = divnodes.map(forcodeval => forcodeval.split(':')[1]).map(val => parseFloat(val)).reduce(reducer, 0)/nodes.length;
+            var x = divnumVals.map(val => parseFloat(val)).reduce(reducer, 0)/nodes.length;
             // console.log(division, x)
-            this.stats.push({ 'category': fieldOfResearchDivisions[division][0], 'color': fieldOfResearchDivisions[division][1], 'value': x, 'start': cumulative, 'end': cumulative + x, 'amount': divnodesContain.length });
-            cumulative += x
+            this.stats.push({ 'category': fieldOfResearchDivisions[division][0], 'color': fieldOfResearchDivisions[division][1], 'value': x, 'amount': divnodesContain.length });
+            // cumulative += x
         };
-
-        // console.log(this.stats.filter(stat => stat.category == "00"));
-        // console.log(this.stats.filter(stat => stat.category == "00")[0]);
-        // this.stats.filter(stat => stat.category == "00")[0].category = "none";
 
         return this.stats
     }
-
-    /**
-     * Create pie chart using THREE.js cylinder slices and 2D text labels
-     * @returns {object} object containing lists of all cylinder slices (THREE.Mesh) and corresponding text labels
-     */
-    makeCylinder() {
-        const stats = this.stats.filter(category_for => category_for.value);
-        this.pie = { "slices": [], "labels": [] }
-        const radius = document.getElementById("rngLayoutRadius").value;
-
-
-        stats.forEach(category_for => {
-            var thetastart = category_for.start * 2 * Math.PI;
-            var theta = category_for.value * 2 * Math.PI;
-            var color = category_for.color;
-
-            var geometry = new THREE.CylinderGeometry(radius, radius, 1, 128, 1, false, thetastart, theta);
-            var material = new THREE.MeshBasicMaterial({ color: color });
-            var cylinder = new THREE.Mesh(geometry, material);
-
-            cylinder.rotateX(Math.PI * 0.5);
-            this.graph.scene().add(cylinder);
-            this.pie.slices.push(cylinder);
-
-            // category_for.category = (category_for.category == "00 No For code") ? "00 No For code" : category_for.category
-
-            if (category_for.value >= 0.02) {
-                var text = _createTextLabel();
-                text.setHTML("<p>" + category_for.category + "</p>");
-                text.setParent(cylinder);
-                this.pie.labels.push(text);
-                this.container.appendChild(text.element);
-
-                text.element.className = 'Absolute-Center'
-
-                let phi = thetastart + theta / 2
-                text.phi = phi
-                var f = 0.5
-                text.position = new THREE.Vector3(f * radius * Math.sin(phi), -f * radius * Math.cos(phi), 0.0)
-                console.log(text.position)
-            }
-        });
-
-        return this.pie
-    }
-
-    /**
-     * Trigger `render2D()` for all existing text labels.
-     * @returns {object} callable object
-     */
-    renderLabels() {
-        return { call: () => this.pie.labels.forEach(label => label.render2D()) }
-    }
 }
 
-/**
- * Create a custom object for a text label containing a `div` element.
- * Position is calculated using `render2D` method, which is called by a listener for graph controls.
- * @returns {object} custom object containing
-*/
-function _createTextLabel() {
-    var div = document.createElement('div');
-    div.className = 'text-label';
-    div.style.position = 'absolute';
-    div.style.width = 100;
-    div.style.height = 100;
-    div.innerHTML = "hi there!";
-    div.style.top = -1000;
-    div.style.left = -1000;
 
-    return {
-        element: div,
-        parent: false,
-        position: new THREE.Vector3(0, 0, 0),
-        setHTML: function (html) {
-            this.element.innerHTML = html;
-        },
-        setParent: function (threejsobj) {
-            this.parent = threejsobj;
-        },
-        render2D: function () {
-            // if (this.parent) {
-            //     if (this.parent.geometry.boundingSphere !== null) {
-            //         this.position.copy(this.parent.geometry.boundingSphere.center);
-            //     }
-            // }
-            window.net.graph.camera().updateMatrixWorld();
-            var coords2d = this.get2DCoords(this.position, window.net.graph.camera());
-            this.element.style.left = coords2d.x + 'px';
-            this.element.style.top = coords2d.y + 'px';
-        },
-        get2DCoords: function (position, camera) {
-            var vector = new THREE.Vector3();
-            vector.copy(position);
-            vector.project(camera);
-            vector.x = (vector.x + 1) / 2 * window.innerWidth;
-            vector.y = -(vector.y - 1) / 2 * window.innerHeight;
-            return vector;
-        }
-    }
-}
 
 const lutFOR = new Lut.Lut('rainbow', 22);
 lutFOR.setMax(22);
 const lutGray = new Lut.Lut('grayscale', 10);
-// lutGray.setMin(1);
 
 var fieldOfResearchDivisions = {
-     '00': ['00 No For code', lutGray.getColor(0.5).getHexString()],
      '01': ['01 Mathematical Sciences', lutFOR.getColor(22).getHexString()],
      '02': ['02 Physical Sciences', lutFOR.getColor(21).getHexString()],
      '03': ['03 Chemical Sciences', lutFOR.getColor(3).getHexString()],
@@ -517,6 +413,7 @@ var fieldOfResearchDivisions = {
      '20': ['20 Language, Communication and Culture', lutFOR.getColor(20).getHexString()],
      '21': ['21 History and Archaeology', lutFOR.getColor(2).getHexString()],
      '22': ['22 Philosophy and Religious Studies', lutFOR.getColor(1).getHexString()],
+     '00': ['00 No FOR code', lutGray.getColor(0.5).getHexString()],
 };
 
 export { CitationNet };

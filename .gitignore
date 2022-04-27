@@ -1,6 +1,7 @@
 env/
 
 *.pyc
+.tox/
 __pycache__/
 
 instance/
