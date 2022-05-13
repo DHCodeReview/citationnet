@@ -1,5 +1,5 @@
 A Flask app to generate and display reference and citation traces of a single publication
-using [DimensionsAI](https://app.dimensions.ai).
+using [Dimensions Analytics](https://app.dimensions.ai).
 
 Documentation is available on [ReadTheDocs](https://citationnet.readthedocs.io/).
 
@@ -31,7 +31,7 @@ flask run
 
 Now open the adress [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser and start exploring.
 
-To close the app, press _CTRL_C_ in the terminal and close it.
+To close the app, press `CTRL C` in the terminal and close it (on Linux).
 
 # Using the interface
 
@@ -39,9 +39,9 @@ The button _Usage_ toggles an explanation of the visual representation of the ci
 
 ## First query
 
-Before running the first query, you will need to provide an access token for DimensionsAI by selecting _Enter DimensionsAI token_ in the interface. If you previously have used the DimensionsAI query language [_dimcli_](https://github.com/digital-science/dimcli) and setup a [personal credential file](https://api-lab.dimensions.ai/cookbooks/1-getting-started/1-Using-the-Dimcli-library-to-query-the-API.html#More-secure-method:-storing-a-private-credentials-file), you can leave this field empty.
+Before running the first query, you will need to provide an access token for Dimensions Analytics by selecting _Enter Dimensions Analytics token_ in the interface. If you previously have used the Dimensions Analytics query language [_dimcli_](https://github.com/digital-science/dimcli) and setup a [personal credential file](https://api-lab.dimensions.ai/cookbooks/1-getting-started/1-Using-the-Dimcli-library-to-query-the-API.html#More-secure-method:-storing-a-private-credentials-file), you can leave this field empty.
 
-To run a query, enter a DOI and press the submit button. For very highly cited papers, the query time is to long. By default there is therefore a limit on the number of citations for the source publication and all other citations. The default value can be changed to at most 500 citations.
+To run a query, enter a DOI and press the submit button. For very highly cited papers, the query time is to long. By default there is therefore a limit on the number of citations for the source publication and all other citations (100 citations). The default value can be changed to at most 500 citations.
 
 The end of data generation is signaled by a success message stating the filename and runtime.
 
@@ -54,13 +54,13 @@ search input field at the navigation bar.
 
 # Visual representation
 
-The inital graph is viewed from the side with the requested publication placed in the center of the screen, shown in red. Time ranges from bottom to top, such that newer publications are above the center and older ones below. If viewed from above nodes farer away from the center have more citations.
+The inital graph is viewed from the side with the requested publication placed in the center of the screen, shown in red. Time ranges from bottom to top, such that newer publications are above the center and older ones below. If viewed from above nodes, farer away from the center have more citations.
 
 Hover over a node to show DOI, year of publishing, fields of research and the number of citations according to Dimensions. Click a node to open the publication using it's DOI.
 
 Click and drag inside the window to rotate the graph. Right-click and drag inside the window to move. Scroll inside the window to zoom in or out.
 
-The menu button right next to the sidebar opens and closes the sidebar.
+The menu button right next to the sidebar opens and closes the sidebar, which allows controlling the perspective (side or top), node and edge options as well as some basic layout options (cylinder radius, citation value of outer radius, and spacing around input node).
 
 # Testing
 
