@@ -8,7 +8,7 @@ CitationNet visualization
 
 This Flask app generates tree structures for citation (and their citations)
 and references (and their references) of a
-source publication using data from `Dimensions Analytics<https://app.dimensions.ai>`_ and
+source publication using data from `Dimensions Analytics <https://app.dimensions.ai>`_ and
 displays this tree as a 3D network.
 
 The development is part of the research project `ModelSEN <https://modelsen.mpiwg-berlin.mpg.de>`_
