@@ -1,6 +1,40 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "citationnet"
+version = "1.0.1"
+authors = [
+    {name="Malte Vogl", email="vogl@gea.mpg.de"},
+    {name="Robert Egel", email="regel@mpiwg-berlin.mpg.de"}
 ]
-build-backend = "setuptools.build_meta"
+description = "Visualize citation and reference networks in 3D."
+readme = "README.md"
+license = {file = "LICENSE.md"}
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "flask[async]",
+  "requests",
+  "semanticlayertools >=0.1.5",
+  "dimcli"
+]
+
+[project.urls]
+"Project Home" = "https://modelsen.mpiwg-berlin.mpg.de"
+"Homepage" = "https://gitlab.gwdg.de/modelsen/citationnet"
+"Issues" = "https://gitlab.gwdg.de/modelsen/citationnet/-/issues"
+
+
+[project.optional-dependencies]
+dev = [
+  "tox",
+  "twine",
+  "sphinx",
+]

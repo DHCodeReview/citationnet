@@ -18,11 +18,11 @@
 # -- Project information -----------------------------------------------------
 
 project = 'CitationNet'
-copyright = '2021, Malte Vogl (ModelSEN)'
-author = 'Malte Vogl'
+copyright = '2024, Malte Vogl (ModelSEN)'
+author = 'Malte Vogl, Robert Egel'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '1.0.1'
 
 master_doc = 'index'
 
