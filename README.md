@@ -80,6 +80,22 @@ pip install citationnet[dev]
 tox -e docs
 ~~~
 
+# Known limitations
+
+The package relies on a for-pay service. The authors of the package have to access to this service anymore. Testing the API calls is thus not possible.
+
+One known problem is the internal shift in Dimensions FOR code standards from 2008 to a more current 2020 version. 
+This breaks the visualization of referenced and cited FOR code percentages. 
+
+# Roadmap
+
+Subject to available funding and time, the package is envisioned to support the OpenAlex API. 
+While coverage of older literature seems less, the supported Domain or Field informations per publication would replace the FOR code.
+
+Speculatively, a combination of Crossref and OpenAlex could be ideal. 
+
+Kindly reach out to us, if this package could be valuable for your work. 
+
 # Funding information
 
 The development is part of the research project [ModelSEN](https://modelsen.mpiwg-berlin.mpg.de)
