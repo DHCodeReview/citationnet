@@ -11,12 +11,12 @@ async function fetchJSON(data) {
 
     try {
         // waits until the request completes...
-        var data = await JSON.parse(data)
+        const retdata = await JSON.parse(data);
     } catch (error) {
-        console.log(data)
-        throw error
+        console.log(data);
+        throw error;
     }
-    return data;
+    return retdata;
 }
 
 
@@ -31,7 +31,7 @@ class CitationNet {
         try {
             if (!(jsondata)) jsondata = jsondata;
         } catch (error) {
-            alert("no JSON containing citation data specified, graph cannot be displayed")
+            alert("no JSON containing citation data specified, graph cannot be displayed");
         }
 
         this.jsondata = jsondata;
@@ -60,7 +60,7 @@ class CitationNet {
 
         if (make_cylinder) {
             this.makeCylinder();
-            this.graph.controls()._listeners.change.push(this.renderLabels())
+            this.graph.controls()._listeners.change.push(this.renderLabels());
         }
 
         this.is_initialized = true;
@@ -99,9 +99,9 @@ class CitationNet {
             .graphData({ nodes: this.data.nodes, links: this.data.edges })
             .nodeId('id')
             .nodeLabel(node => {
-                var doi = (typeof node.attributes.doi !== 'undefined') ? node.attributes.doi : node.id
-                var category_for = (typeof node.attributes.category_for !== 'undefined') ? ", FOR: " + node.attributes.category_for : ""
-                return `${doi} @ ${node.attributes.nodeyear}\n <br> cited ${node.attributes['ref-by-count']} times${category_for}`
+                var doi = (typeof node.attributes.doi !== 'undefined') ? node.attributes.doi : node.id;
+                var category_for = (typeof node.attributes.category_for !== 'undefined') ? ", FOR: " + node.attributes.category_for : "";
+                return `${doi} @ ${node.attributes.nodeyear}\n <br> cited ${node.attributes['ref-by-count']} times${category_for}`;
             }
             )
             .nodeRelSize(0.5)
@@ -117,13 +117,13 @@ class CitationNet {
 
             .enableNodeDrag(false)
             .onNodeClick(node => {
-                var doi = (typeof node.attributes.doi !== 'undefined') ? node.attributes.doi : node.id
-                window.open(`https://doi.org/${doi}`)
+                var doi = (typeof node.attributes.doi !== 'undefined') ? node.attributes.doi : node.id;
+                window.open(`https://doi.org/${doi}`);
             }) // open using doi when node is clicked
             ;
 
         // somehow this needs to be done after graph instantiated or else it breaks layouting
-        this.graph.d3Force('link', this.graph.d3Force('link').strength(0.0)) // show edges, but set strength to 0.0 -> no charge/spring forces
+        this.graph.d3Force('link', this.graph.d3Force('link').strength(0.0)); // show edges, but set strength to 0.0 -> no charge/spring forces
 
         // vertical positioning according to year of publication
         this.graph.graphData().nodes.forEach((node) => {
@@ -149,7 +149,7 @@ class CitationNet {
     * @param {number} exp - exponent (used for adjusting spacing between nodes), default = 1.0
     * @returns {function} Interpolation function
     */
-    static strengthFuncFactory(minStrength = 0.0, maxStrength, min = 0, max = 100, exp = 1.0) {
+    static strengthFuncFactory(maxStrength, minStrength = 0.0, min = 0, max = 100, exp = 1.0) {
 
         let strengthFunc = function (node, i, nodes) {
             let x = node.attributes['ref-by-count'];
@@ -162,7 +162,7 @@ class CitationNet {
             return out <= minStrength ? minStrength
                 : out >= maxStrength ? maxStrength
                     : out ** exp;
-        }
+        };
         return strengthFunc;
     }
 
@@ -214,7 +214,7 @@ class CitationNet {
               !a.outgoingLinks && (a.outgoingLinks = []);
               a.outgoingLinks.push(edge);
 
-              !a.outgoingLinkTo && (a.outgoingLinkTo = [])
+              !a.outgoingLinkTo && (a.outgoingLinkTo = []);
               a.outgoingLinkTo.push(b);
 
               !b.incomingLinks && (b.incomingLinks = []);
@@ -298,7 +298,7 @@ class CitationNet {
         } else {
             this.graph.d3Force('radialOuter', d3.forceRadial(radius).strength(CitationNet.strengthFuncFactory(0.0, 1.0, 0, outerValue)));
         }
-        console.log("reheating")
+        console.log("reheating");
         this.graph.d3ReheatSimulation();
     }
 
@@ -346,7 +346,7 @@ class CitationNet {
             document.getElementById("btnDistanceFromInputNode").style.fontWeight = "bold";
             this.distanceFromInputNode = true;
         }
-        console.log("reheating")
+        console.log("reheating");
         this.graph.d3ReheatSimulation();
     }
 
@@ -358,9 +358,9 @@ class CitationNet {
         this.data = await fetchJSON(this.jsondata);
         this.processData();
 
-        var nodes = this.data.nodes
+        var nodes = this.data.nodes;
         // var nodes = this.graph.graphData().nodes
-        this.stats = []
+        this.stats = [];
         // var cumulative = 0.0;
 
         for (var division in fieldOfResearchDivisions){
@@ -378,9 +378,9 @@ class CitationNet {
             // console.log(division, x)
             this.stats.push({ 'category': fieldOfResearchDivisions[division][0], 'color': fieldOfResearchDivisions[division][1], 'value': x, 'amount': divnodesContain.length });
             // cumulative += x
-        };
+        }
 
-        return this.stats
+        return this.stats;
     }
 }
 

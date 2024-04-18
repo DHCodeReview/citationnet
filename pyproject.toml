@@ -33,8 +33,22 @@ dependencies = [
 
 
 [project.optional-dependencies]
-dev = [
+test = [
   "tox",
-  "twine",
-  "sphinx",
+  "pytest",
+  "pytest-cov"
 ]
+docs = [
+  "sphinx_rtd_theme",
+  "m2r2",
+  "sphinx",
+  "sphinx-autoapi"
+]
+dev = ["twine"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff]
+line-length = 120
+ignore = ["S101", "S311", "TD003", "ANN101", "N802", "N803", "N806"]

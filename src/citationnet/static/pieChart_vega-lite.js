@@ -14,19 +14,19 @@ function toggleFORChart() {
 
 async function showFOR() {
     document.getElementById("btnFORChart").style.fontWeight = "bolder";
-    forChartDivvis.hidden = true
-    forChartDivloader.hidden = false
-    forChartDiv.hidden = false
+    forChartDivvis.hidden = true;
+    forChartDivloader.hidden = false;
+    forChartDiv.hidden = false;
 
     await loadFOR();
 
-    forChartDivvis.hidden = false
-    forChartDivloader.hidden = true
+    forChartDivvis.hidden = false;
+    forChartDivloader.hidden = true;
 }
 
 function hideFOR() {
     document.getElementById("btnFORChart").style.fontWeight = "normal";
-    forChartDiv.hidden = true
+    forChartDiv.hidden = true;
 }
 
 async function loadFOR() {
@@ -40,7 +40,7 @@ async function loadFOR() {
     vegaLiteSpec.encoding.color.scale.domain = domain;
     vegaLiteSpec.encoding.color.scale.range = range;
 
-    console.log(vegaLiteSpec)
+    console.log(vegaLiteSpec);
 
     vegaEmbed('#forChartDivvis', vegaLiteSpec);
 }

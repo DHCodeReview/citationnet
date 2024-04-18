@@ -1,20 +1,17 @@
-import os
-
+"""Test citationnet python part."""
+import citationnet
 import pytest
 
-import citationnet
 
-
-@pytest.fixture
+@pytest.fixture()
 def client():
     app = citationnet.create_app()
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
 
 def test_returnvalue(client):
     """Start with a blank database."""
-
-    rv = client.get('/')
+    rv = client.get("/")
     assert rv.status_code == 200
