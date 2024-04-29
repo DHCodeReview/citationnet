@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+
+<script src="{{ url_for('static', filename='d3-force.js') }}"></script>
+<script src="{{ url_for('static', filename='3d-force-graph.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='vega.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vega-lite.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vega-embed.min.js') }}"></script>
+
+<style>
+  .Absolute-Center {
+    transform: translate(-30%, -100%);
+    position: absolute;
+  }
+
+  .Absolute-Center p {
+    vertical-align: middle;
+    text-align: center;
+  }
+</style>
+
+<div id="3d-graph" style="position: fixed; top: 75px; height:100px; left: 0px;">
+</div>
+<div id="main">
+  <button class="btn btn-outline-success float-left openbtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">☰</button>
+</div>
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="sidebarLabel">Options</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+    <h6>Toggle views</h6>
+      <ul class="list-group mb-2">
+        <a class="list-group-item" href="javascript:void(0)" id="btnTopView" onclick="window.net.view('top')">Top view</a>
+        <a class="list-group-item" href="javascript:void(0)" id="btnSideView" onclick="window.net.view('side')">Side view</a>
+        <a class="list-group-item" href="javascript:void(0)" id="btnFORChart" onclick="toggleFORChart()">Fields of Research</a>
+      </ul>
+    </div>
+    <div class="my-2">
+      <h6>Node options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" href="javascript:void(0)" id="btnNodeSize" onclick="window.net.toggleNodeSize()">Size by number of citations</a>
+        <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#relnodesize" aria-expanded="false" aria-controls="relnodesize">Relative node size</a>
+      </ul>
+      <div class="collapse input-group my-2" id="relnodesize">
+        <input type="range" min="0.1" max="1.0" value="0.5" step="0.1" class="slider" id="rngNodeSize">
+        <button class="btn btn-primary" onclick="window.net.readNodeSize()">set</button>
+      </div>
+    </div>
+    <div class="mb-2">
+      <h6>Edge options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" href="javascript:void(0)" id="btnEdgesOnlyInput" onclick="window.net.toggleEdgesOnlyInput()">Edges of input only</a>
+      </ul>
+    </div>
+    <div>
+      <h6>Layout options</h6>
+      <ul class="list-group">
+        <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#cylinderradius" aria-expanded="false" aria-controls="cylinderradius">Cylinder radius</a>
+      <a class="list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#outerringvalue" aria-expanded="false" aria-controls="outerringvalue">Outer value</a>
+      <a class="list-group-item" href="javascript:void(0)" id="btnDistanceFromInputNode" onclick="window.net.toggleDistanceFromInputNode()"
+        style="font-weight: bold;">Spacing around input</a>
+      </ul>
+      <div class="collapse input-group my-2" id="cylinderradius">
+        <input type="range" min="0" max="500" value="350" class="slider" id="rngLayoutRadius">
+        <button class="btn btn-primary" onclick="window.net.readLayout()">set</button>
+      </div>
+      <div class="collapse input-group my-2" id="outerringvalue">
+        <input type="range" min="0" max="1000" value="800" class="slider" id="rngLayoutOuterValue">
+        <button class="btn btn-primary" onclick="window.net.readLayout()">set</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { CitationNet } from "{{ url_for('static', filename='force-citationNet.js') }}";
+
+  const jsondata = await '{{ jsondata|tojson }}';
+  window.net = new CitationNet(jsondata);
+  window.net.initialize(false);
+  document.getElementById("sidebar").style.width = "300px";
+
+  window.adaptWindowSize = () => {
+    var navHeight = document.getElementsByClassName("navbar")[0].scrollHeight;
+
+    window.net.adaptWindowSize();
+    document.getElementById("3d-graph").style.top = navHeight;
+    document.getElementById("sidebar").style.top = navHeight;
+  };
+
+  window.onresize = window.adaptWindowSize;
+
+  await showFOR();
+</script>
+
+<!-- Draggable DIV -->
+<div id="forChartDiv" hidden>
+  <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+  <div id="forChartDivheader">
+    Fields of Research
+  </div>
+  <div id="forChartDivvis" hidden></div>
+  <div id="forChartDivloader" class="loader"></div>
+</div>
+
+<script src="{{ url_for('static', filename='pieChart_vega-lite.js') }}"></script>
+
+{% endblock %}
