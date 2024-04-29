@@ -1,0 +1,38 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "FOR distribution pie chart",
+  "data": {
+    "values": "empty"
+  },
+  "encoding": {
+    "theta": { "field": "value", "type": "quantitative", "stack": true },
+    "color": { "field": "category", "type": "nominal", "legend": null, "scale": {"domain": ["gold", "silver"], "range": ["#F1C40F", "#95A5A6"]}},
+    "tooltip": [
+      { "field": "category", "type": "nominal", "title": "Category (FOR)" },
+      { "field": "value", "type": "quantitative", "format": ".1p", "title": "Share of FOR code"},
+      { "field": "amount", "type": "quantitative", "title": "Number of publications"}
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "arc",
+        "outerRadius": 180
+      }
+    },
+    {
+      "mark": { "type": "text", "radius": 200 },
+      "encoding": {
+        "text": {
+          "field": "value",
+          "type": "quantitative",
+          "format": ".1p",
+          "condition": {
+            "test": "datum['value'] < 0.03", "value":""
+          }
+        }
+      }
+    }
+  ],
+  "background": null
+}
