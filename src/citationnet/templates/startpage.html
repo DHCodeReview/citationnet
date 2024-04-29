@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="my-3">
+  <h3>Generate reference and citation tree-like graphs</h3>
+  <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#usage" aria-expanded="false" aria-controls="usage">
+   Usage
+ </button>
+  <div class="collapse container my-3" id="usage">
+    <p>
+      The inital graph is viewed from the side with the requested publication placed in the center of the screen, shown in red.
+      Time ranges from bottom to top, such that newer publications are above the center and older ones below.
+      If viewed from above nodes farer away from the center have more citations.
+    </p>
+    <p>
+      Hover over a node to show DOI, year of publishing, fields of research and the number of citations according to Dimensions.
+      Click a node to open the publication using it's DOI.
+    </p>
+    <p>
+    Click and drag inside the window to rotate the graph. Right-click and drag inside the window to move.
+    Scroll inside the window to zoom in or out.
+    </p>
+    <p>
+    The menu button right next to the sidebar opens and closes the sidebar.
+    Should there be any issues, questions or feature requests, feel free to message
+    <a class="mail" href="mailto:mvogl@mpiwg-berlin.mpg.de">Malte Vogl</a> or <a class="mail"
+      href="mailto:regel@mpiwg-berlin.mpg.de">Robert Egel.</a>
+    </p>
+  </div>
+  <hr/>
+</div>
+<form action="/generatedata/" method='post'>
+  <label for="doiInput" class="form-label">Generate data for DOI:</label>
+  <div class="input-group my-3">
+    <span class="input-group-text" id="basic-doiurl">https:/doi.org/</span>
+    <input type="text" class="form-control" name="doiInput" id="doiInput" aria-describedby="EnterDOI">
+    <span class="input-group-text" id="basicCited">cited at most</span>
+    <input type="number" class="form-control" name="citationlimit" min=10 max=500 value=100 aria-describedby="citationlimit">
+    <span class="input-group-text" id="basicTimes">times.</span>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+  <div class="my-3">
+    <label for="inputToken" class="btn btn-outline-success form-label" data-bs-toggle="collapse" data-bs-target="#inputToken" aria-expanded="false" aria-controls="inputToken">Enter Dimensions Analytics token</label>
+    <input type="password" class="collapse form-control" name="inputToken" id="inputToken">
+    <div id="tokenHelp" class="form-text">
+        The routine makes use of Dimensions Analytics API.
+        Register <a href="https://app.dimensions.ai" target="_blank">here</a> for a token.
+        You can also setup a <a href="https://api-lab.dimensions.ai/cookbooks/1-getting-started/1-Using-the-Dimcli-library-to-query-the-API.html#More-secure-method:-storing-a-private-credentials-file" target="_blank">
+        personal credential file</a>. In this case the token field can remain empty.
+    </div>
+  </div>
+</form>
+
+{% endblock %}
